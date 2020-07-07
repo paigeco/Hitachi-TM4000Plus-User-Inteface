@@ -1,1 +1,7 @@
-{"BAUD":9600,"DELIM_VAL":13,"channel_1":"manual_connection","SERIAL_ENCODING":"a"}
+{
+    "BAUD":9600,
+    "DELIM_VAL":13,
+    "channel_1":"manual_connection",
+    "SERIAL_ENCODING":"a",
+    "MANUFACTURER":"arduino"
+}

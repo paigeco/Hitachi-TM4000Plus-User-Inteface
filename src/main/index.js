@@ -62,44 +62,58 @@ ipcMain.on('ping', (event, msg) => {
   event.reply('pong', 'hi web page') // send to web page
 })
 
-ipcMain.on('list_connected_devices', (event, msg) => {
-  console.log(msg)
-  console.log(event)
+ipcMain.on('list_connected_devices', (event, data) => {
   // query the device for ports
-  SerialPort.list().then(function (data) {
-    // emit the connected devices information back to all connected sockets
-    event.reply('list_connected_devices', data)
+  readPortsObject(function (err, data) {
+    if (err) {
+      console.log(err)
+    } else {
+      // emit the connected devices information back to all connected sockets
+      event.reply('list_connected_devices', data)
+    }
   })
 })
 
-ipcMain.on('manual_connection', (event, data) => {
-  response = connectByPath(data)
-  event.reply('manual_connection', response)
+ipcMain.on('manual_connection', (event, comPath) => {
+  connectByPath(comPath, function (err) {
+    event.reply('manual_connection', err)
+  })
 })
 
-/*
-ipcMain.on('connect_by_manufacturer',(event,data) =>{
-  console.log(event)
-  // make a connection to the given port
-  global.serial_port_connection = new SerialPort(data.path, {
-    baudRate:configs.baud
-  },function(data){
-      // upon the opening of the port print a message to the console
-      console.log('opening a connection to the device on port: ',data.path)
-  });
-
-  // setup the input parser for the given port
-
+ipcMain.on('connect_by_aspect', (event, data) => {
+  connectByCOMAspect('manufacturer', configs.MANUFACTURER, function (err) {
+    event.reply('connect_by_aspect', err)
+  })
 })
-*/
 
 ipcMain.on('send_data_to_device', (event, data) => {
   console.log(data.packet) // msg from web page
   event.reply('pong', 'hi web page') // send to web page
 })
 
+//
+//
+//
+//
+//
+//
+//
+//
+
+// CONSTRUCT THE READ PORTS FUNCTION
+const readPortsObject = function (callback) {
+  // query the device for ports
+  SerialPort.list().then(function (data) {
+    if (callback) {
+      callback(err, data)
+    } else {
+      throw Error('This function requires a callback')
+    }
+  })
+}
+
 // CONSTRUCT THE MANUAL CONNECTION FUNCTION
-const connectByPath = function (data) {
+const connectByPath = function (data, callback) {
   // CONNECT FROM PATH
 
   // MAKE A SERIAL PORT CONNECTION FOR WRITING
@@ -110,19 +124,54 @@ const connectByPath = function (data) {
     console.log('opening a connection to the device on port: ', data.path)
   })
 
+  global.serial_port_connection.on('open', function () {
+    console.log('connection done! now connected at port: ' + arduinoport)
+  })
+
   // setup a parser for the given port
   global.serial_port_parser = global.serial_port_connection.pipe(new Delimiter({ // CREATE THE PARSER
     delimiter: String.fromCharCode(configs.DELIM_VAL), // SET THE DELIMITING CHAR
     encoding: configs.SERIAL_ENCODING // SET THE SERIAL ENCODING
   }))
 
-  returnFlag = 'This definitely worked, rawr XD' // SET THE OUTPUT
+  if (callback) {
+    callback(errCode)
+  }
+}
 
-  return returnFlag
+// CONSTRUCT THE AUTOMATIC CONNECTION BY MANUFACTURER FUNCTION
+const connectByCOMAspect = function (identifierType, manufacturer, callback) {
+  // LOG THAT WE ARE ATTEMPTING A CONNECTION
+  console.log('Attempting to find a connection.')
+  // GET ALL THE CONNECTED SERIAL PORTS
+  SerialPort.list().then(function (data) {
+    let checkFlag = false
+    // ITERATE THROUGH THE OBJECT RETURNED FROM THE SERIALPORT CALLBACK
+    data.forEach(function (port) {
+      // GET THE PORT'S MANUFACTURER
+      const pm = port[identifierType]
+      // CHECK IF IT IS THE SAME AS MANUFACTURER
+      if (typeof pm !== 'undefined' && pm.includes(manufacturer)) {
+        // SET THE CHECK FLAG
+        checkFlag = true
+        // GET THE PATH FOR THE PORT
+        data.path = port.path.toString()
+        // PASS THAT PATH TO CONNECTBYPATH
+        connectByPath(data, callback)
+      }
+    })
+    // CHECK FOR THE CHECK FLAG
+    if (!checkFlag && callback) {
+      // SET THE ERROR CODE
+      const errCode = 1
+      // RETURN NO CONNECTED DEVICE CODE = 1
+      callback(errCode)
+    }
+  })
 }
 
 /*
-const constructParser = function (data) {
+const constructParser = function (data, callback) {
   global.serial_port_parser.on('data', function (data) {
     // WAHH
   })
