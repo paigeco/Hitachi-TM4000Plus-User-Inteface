@@ -26,25 +26,24 @@ window.addEventListener('DOMContentLoaded', function () {
   var context = canvas.getContext('2d')
   // we don't need to append the video to the document
   var video = document.createElement('video')
-  var videoObj =
-		navigator.getUserMedia || navigator.mozGetUserMedia ? // our browser is up to date with specs ?
-			{
-		    video: {
-				width: { min: 1280, max: 1280 },
-		    	height: { min: 720, max: 720 },
-				require: ['width', 'height']
-				}
-			}:
-			{
-		    video: {
-				mandatory: {
-		        minWidth: 1280,
-		        minHeight: 720,
-		        maxWidth: 1280,
-		        maxHeight: 720
-		    	}
-		    }
-			}
+  var videoObj = navigator.getUserMedia || navigator.mozGetUserMedia // our browser is up to date with specs ?
+    ? {
+      video: {
+        width: { min: 1280, max: 1280 },
+        height: { min: 720, max: 720 },
+        require: ['width', 'height']
+      }
+    }
+    : {
+      video: {
+        mandatory: {
+          minWidth: 1280,
+          minHeight: 720,
+          maxWidth: 1280,
+          maxHeight: 720
+        }
+      }
+    }
   var errBack = function (error) {
     console.log('Video capture error: ', error.code)
   }
@@ -86,6 +85,6 @@ window.addEventListener('DOMContentLoaded', function () {
     float:left;
     width:100%;
     max-width: 100;
-	border: 5px solid lightskyblue;
+    border: 5px solid lightskyblue;
 }
 </style>
