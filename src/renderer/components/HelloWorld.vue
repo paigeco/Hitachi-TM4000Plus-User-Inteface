@@ -1,5 +1,5 @@
 <template>
-  <div>{{msg}}</div>
+  <noscript>{{msg}}</noscript>
 </template>
 
 <script>

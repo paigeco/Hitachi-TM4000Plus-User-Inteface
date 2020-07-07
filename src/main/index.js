@@ -7,10 +7,10 @@ import path from 'path'
 
 // IMPORT NODE STUFF
 const SerialPort = require('serialport')
-//const Delimiter = SerialPort.parsers.Delimiter
+const Delimiter = SerialPort.parsers.Delimiter
 
 // IMPORT THE CONFIGS FROM THE CONFIGS FILE
-const configs = require(path.join(__dirname, 'app_config.json'))
+const configs = require('./app_config.json')
 
 // CHECK IF IS IN DEVELOPMENT MODE
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -44,13 +44,11 @@ app.on('ready', () => {
       slashes: true
     }))
   }
-
+  console.log(window)
   window.on('closed', () => { // UPON WINDOW CLOSE ASK
     window = null // CLOSE THE WINDOw
   })
 })
-
-console.log(window)
 
 app.on('window-all-closed', () => { // UPON WINDOWS CLOSE
   if (process.platform !== 'darwin') { // IF RUNNING ON A MAC
@@ -123,8 +121,10 @@ const connectByPath = function (data) {
   return returnFlag
 }
 
+/*
 const constructParser = function (data) {
   global.serial_port_parser.on('data', function (data) {
     // WAHH
   })
 }
+*/

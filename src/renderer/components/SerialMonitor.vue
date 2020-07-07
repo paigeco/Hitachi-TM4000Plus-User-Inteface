@@ -5,7 +5,7 @@
       <div id="output">
       </div>
       <input id="serial-command" type="text" placeholder="Please enter your ascii to be sent here..."/>
-      <button id="send">Send String</button>
+      <button id="send" @click="sendString()">Send</button>
     </div>
   </div>
 </template>
@@ -25,19 +25,22 @@ export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  methods: {
+    sendString: function () {
+      var stringInput = document.getElementById('serial-command')
+      window.ipcRenderer.send('list_connected_devices', stringInput.value)
+      window.ipcRenderer.on('list_connected_devices', (event, msg) => console.log(msg))
+    }
   }
 }
-
-// Query DOM
-var packet = document.getElementById('serial-command')
-var sendButton = document.getElementById('send')
-var output = document.getElementById('output')
 
 if (window.isElectron) {
   window.ipcRenderer.send('ping', 'hello main')
   window.ipcRenderer.on('pong', (event, msg) => console.log(msg))
 }
 
+/*
 // Emit events
 sendButton.addEventListener('click', function () {
   console.log(packet.value)
@@ -54,6 +57,7 @@ window.ipcRenderer.on('recieve_data_from_device', function (data) {
   output.innerHTML += '<p><strong>' + data.sender + ": </strong>'" + data.packet + "'</p>"
 })
 
+*/
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -71,5 +75,15 @@ li {
 }
 a {
   color: #42b983;
+}
+#serial-command {
+  float: left;
+  width: 75%;
+  margin: 0px;
+}
+#send {
+  float: right;
+  width: 20%;
+  margin: 0px;
 }
 </style>
