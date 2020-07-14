@@ -89,5 +89,7 @@ ipcMain.on('connect_by_aspect', (event, data) => {
 })
 
 ipcMain.on('send_data', (event, data) => {
-  sConn.sendData(data)
+  sConn.sendData(data, function (dat) {
+    event.reply('send_data', dat)
+  })
 })

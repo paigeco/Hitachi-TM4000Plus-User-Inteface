@@ -80,12 +80,15 @@ const constructParser = function (callback) {
   })
 }
 
-const sendData = function (data) {
+const sendData = function (data, callback) {
   global.serial_port_connection.write(data, function (err) {
     if (err) {
+      callback(err)
       return console.log('Error on write: ', err.message)
+    } else {
+      callback(err, 'true')
+      console.log('message written')
     }
-    console.log('message written')
   })
 }
 
