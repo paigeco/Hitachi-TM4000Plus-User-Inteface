@@ -24,6 +24,8 @@ app.on('ready', () => {
   // SET THE WINDOW SETTINGS
   global.win = new BrowserWindow({
     width: 1024, // THIS CAN BE CHANGED WITHOUT BREAKING ANYTHING
+    minHeight: 300,
+    minWidth: 720,
     webPreferences: {
       nodeIntegration: true // LOOK INTO USING PRELOAD.JS
     }
@@ -51,8 +53,15 @@ app.on('ready', () => {
       console.log(arg) // prints "ping"
       win.webContents.send('pong', 'whoooooooh!')
     }) */
+
+    // CHANGE THE SIZE ON RESIZE
+    global.win.on('resize', function () {
+      setTimeout(function () {
+        var size = win.getSize()
+        win.setSize(size[0], parseInt(size[0] * 9 / 16))
+      }, 0)
+    })
   })
-  global.win.webContents.send('pong', 'whoooooooh!')
   global.win.on('closed', () => { // UPON WINDOW CLOSE ASK
     global.win = null // CLOSE THE WINDOw
   })

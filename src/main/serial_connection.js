@@ -86,7 +86,6 @@ const sendData = function (data, callback) {
       callback(err)
       return console.log('Error on write: ', err.message)
     } else {
-      callback(err, 'true')
       console.log('message written')
     }
   })

@@ -31,6 +31,8 @@ export default {
 
 <style>
 #app {
+  height:100%;
+  width:100%;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -39,17 +41,20 @@ export default {
   float:center;
   margin:0;
   padding:0;
+  overflow: hidden;
+  overflow-y : hidden;
+  overflow-x : hidden
 }
 #webcam-window{
     float:left;
     width:66%;
-    height:90%;
+    height:100%;
 }
 
 #serial-window {
     float:right;
     width:33%;
-    height:90%;
+    height:100%;
 }
 #welcomen{
     float:bottom;
