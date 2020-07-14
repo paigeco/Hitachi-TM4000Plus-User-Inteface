@@ -22,7 +22,7 @@ app.on('ready', () => {
   // BEGIN
 
   // SET THE WINDOW SETTINGS
-  var window = new BrowserWindow({
+  global.win = new BrowserWindow({
     width: 1024, // THIS CAN BE CHANGED WITHOUT BREAKING ANYTHING
     webPreferences: {
       nodeIntegration: true // LOOK INTO USING PRELOAD.JS
@@ -31,21 +31,30 @@ app.on('ready', () => {
 
   // IF WE ARE IN DEV MODE,
   if (isDevelopment) {
-    // LOAD FROM THE HOSTED WEB SERVER
-    window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`)
+    // LOAD FROM THE HOSTED WEB SEver
+    global.win.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`)
 
     // IF IN PRODUCTION,
   } else {
     // LOAD THE INDEX.HTML FROM THE FILE INSTEAD
-    window.loadURL(formatUrl({
+    global.win.loadURL(formatUrl({
       pathname: path.join(__dirname, 'index.html'),
       protocol: 'file',
       slashes: true
     }))
   }
-  console.log(window)
-  window.on('closed', () => { // UPON WINDOW CLOSE ASK
-    window = null // CLOSE THE WINDOw
+  console.log(global.win)
+
+  global.win.webContents.on('did-finish-load', () => {
+    /*
+    ipcMain.on('ping', (event, arg) => {
+      console.log(arg) // prints "ping"
+      win.webContents.send('pong', 'whoooooooh!')
+    }) */
+  })
+  global.win.webContents.send('pong', 'whoooooooh!')
+  global.win.on('closed', () => { // UPON WINDOW CLOSE ASK
+    global.win = null // CLOSE THE WINDOw
   })
 })
 
@@ -71,6 +80,14 @@ ipcMain.on('manual_connection', (event, comPath) => {
 
 ipcMain.on('connect_by_aspect', (event, data) => {
   sConn.connectByCOMAspect('manufacturer', configs.MANUFACTURER, function (err) {
+    sConn.constructParser(function (data) {
+      console.log(data)
+      global.win.webContents.send('data_recieved', data)
+    })
     event.reply('connect_by_aspect', err)
   })
+})
+
+ipcMain.on('send_data', (event, data) => {
+  sConn.sendData(data)
 })

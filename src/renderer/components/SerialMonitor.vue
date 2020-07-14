@@ -5,8 +5,10 @@
       <div id="output">
       </div>
       <input id="serial-command" type="text" placeholder="Please enter your ascii to be sent here..."/>
-      <button id="send" @click="sendString()">Send</button>
+      <button id="send" @click="sendMsg()">Send</button>
     </div>
+    <button id="connect" @click="sendListDevices()">Connect</button>
+    <button id="list_devices" @click="sendListDevices()">List Devices</button>
   </div>
 </template>
 
@@ -27,16 +29,21 @@ export default {
     msg: String
   },
   methods: {
-    sendString: function () {
+    sendListDevices: function () {
       var stringInput = document.getElementById('serial-command')
       window.ipcRenderer.send('list_connected_devices', stringInput.value)
       window.ipcRenderer.on('list_connected_devices', (event, msg) => console.log(msg))
+    },
+    sendMsg: function () {
+      var stringInput = document.getElementById('serial-command')
+      window.ipcRenderer.send('send_data', stringInput.value)
     }
   }
 }
 
 if (window.isElectron) {
   window.ipcRenderer.send('ping', 'hello main')
+  window.ipcRenderer.send('connect_by_aspect', 'test')
   window.ipcRenderer.on('pong', (event, msg) => console.log(msg))
 }
 

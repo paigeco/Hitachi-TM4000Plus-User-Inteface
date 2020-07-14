@@ -1,6 +1,6 @@
 // IMPORT NODE STUFF
 const SerialPort = require('serialport')
-const Delimiter = SerialPort.parsers.Delimiter
+const Readline = SerialPort.parsers.Readline
 
 // IMPORT THE CONFIGS FROM THE CONFIGS FILE
 const configs = require('./app_config.json')
@@ -34,9 +34,8 @@ const connectByPath = function (comPath, callback) {
   })
 
   // setup a parser for the given port
-  global.serial_port_parser = global.serial_port_connection.pipe(new Delimiter({ // CREATE THE PARSER
-    delimiter: String.fromCharCode(configs.DELIM_VAL), // SET THE DELIMITING CHAR
-    encoding: configs.SERIAL_ENCODING // SET THE SERIAL ENCODING
+  global.serial_port_parser = global.serial_port_connection.pipe(new Readline({ // CREATE THE PARSER
+    delimiter: '\n' // String.fromCharCode(configs.DELIM_VAL) // SET THE DELIMITING CHAR
   }))
 
   if (callback) {
@@ -45,7 +44,7 @@ const connectByPath = function (comPath, callback) {
 }
 
 // CONSTRUCT THE AUTOMATIC CONNECTION BY MANUFACTURER FUNCTION
-const connectByCOMAspect = function (identifierType, manufacturer, callback) {
+const connectByCOMAspect = function (identifierType, id, callback) {
   // LOG THAT WE ARE ATTEMPTING A CONNECTION
   console.log('Attempting to find a connection.')
   // GET ALL THE CONNECTED SERIAL PORTS
@@ -56,7 +55,7 @@ const connectByCOMAspect = function (identifierType, manufacturer, callback) {
       // GET THE PORT'S MANUFACTURER
       const pm = port[identifierType]
       // CHECK IF IT IS THE SAME AS MANUFACTURER
-      if (typeof pm !== 'undefined' && pm.includes(manufacturer)) {
+      if (typeof pm !== 'undefined' && pm.includes(id)) {
         // SET THE CHECK FLAG
         checkFlag = true
         // GET THE PATH FOR THE PORT
@@ -75,9 +74,18 @@ const connectByCOMAspect = function (identifierType, manufacturer, callback) {
   })
 }
 
-const constructParser = function (data, callback) {
+const constructParser = function (callback) {
   global.serial_port_parser.on('data', function (data) {
-    // WAHH
+    callback(data)
+  })
+}
+
+const sendData = function (data) {
+  global.serial_port_connection.write(data, function (err) {
+    if (err) {
+      return console.log('Error on write: ', err.message)
+    }
+    console.log('message written')
   })
 }
 
@@ -85,5 +93,6 @@ module.exports = {
   readPortsObject: readPortsObject,
   connectByPath: connectByPath,
   connectByCOMAspect: connectByCOMAspect,
-  constructParser: constructParser
+  constructParser: constructParser,
+  sendData: sendData
 }
