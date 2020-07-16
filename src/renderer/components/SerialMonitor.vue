@@ -12,15 +12,6 @@
       <input id="serial-command" type="text" placeholder="Please enter your ascii to be sent here..."/>
       <button id="send" @click="sendMsg()">Send</button>
     </div>
-    <button id="connect" @click="autoConnect()">Automatically Connect</button>
-    <div id='manual_conn'>
-      <button id="list_devices" @click="sendListDevices()">Manually Connect</button>
-    </div>
-      <ul v-if="serialDevices">
-        <li v-for="device in serialDevices" :key="device.path">
-          <button @click="sendListDevices(device.path)">{{ device.path }}</button>
-        </li>
-      </ul>
   </div>
 </template>
 
@@ -42,6 +33,7 @@ init()
 // eslint-disable-next-line prefer-const
 let vm = {
   props: {},
+  name: 'SerialMonitor',
   communicationLog: [],
   serialDevices: false,
   data () {
@@ -51,22 +43,10 @@ let vm = {
     }
   },
   methods: {
-    sendListDevices: function () {
-      window.ipcRenderer.send('list_connected_devices', 'NULL')
-      window.ipcRenderer.on('list_connected_devices', function (event, arg) {
-        vm.serialDevices = arg
-      })
-    },
     sendMsg: function () {
       var stringInput = document.getElementById('serial-command')
       vm.communicationLog.push({ sender: 'To Device', message: stringInput.value, color: 'blue' })
       window.ipcRenderer.send('send_data', stringInput.value)
-    },
-    autoConnect: function () {
-      window.ipcRenderer.send('connect_by_aspect', 'NULL')
-    },
-    manualConnect: function (path) {
-      window.ipcRenderer.send('manual_connection', path)
     },
     created () {
     }
@@ -79,13 +59,10 @@ export default vm
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
 ul {
   list-style-type: none;
   padding: 0;
-  overflow:hidden;
+  overflow-x:hidden;
   overflow-y:scroll;
   height:100%
 }
@@ -100,7 +77,7 @@ a {
 }
 #serial-command {
   float: left;
-  width: 75%;
+  width: 80%;
   margin: 0px;
 }
 #send {

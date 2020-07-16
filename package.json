@@ -30,9 +30,10 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "bootstrap": "^4.5.0",
+    "bootstrap-vue": "^2.15.0",
     "serialport": "^9.0.0",
     "source-map-support": "^0.5.19",
     "vue": "^2.6.11"
   }
 }
-

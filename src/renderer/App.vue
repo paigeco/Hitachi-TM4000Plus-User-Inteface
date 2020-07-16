@@ -1,30 +1,28 @@
 <template>
   <div id="app">
-      <div id="wrapper">
-        <div id="webcam-window">
-            <CameraMirror/>
-        </div>
-        <div id="serial-window">
-            <SerialMonitor/>
-        </div>
-      </div>
-      <div id="welcomen">
-      <HelloWorld id = "greet" msg="Welcome to the App"/>
-      </div>
+    <div id="webcam-window">
+      <CameraMirror/>
+    </div>
+    <div id="serial-monitor-window">
+      <SerialMonitor/>
+    </div>
+    <div id ="serial-connection-window">
+      <SerialConnection/>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 import CameraMirror from './components/CameraMirror.vue'
 import SerialMonitor from './components/SerialMonitor.vue'
+import SerialConnection from './components/SerialConnection.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
     CameraMirror,
-    SerialMonitor
+    SerialMonitor,
+    SerialConnection
   }
 }
 </script>
@@ -47,18 +45,22 @@ export default {
 }
 #webcam-window{
     float:left;
-    width:66%;
+    width:67%;
     height:100%;
+    position:absolute;
 }
 
-#serial-window {
+#serial-monitor-window {
     float:right;
     width:33%;
     height:100%;
+    position: relative;
 }
-#welcomen{
-    float:bottom;
-    width:100%;
-    height:10%;
+#serial-connection-window{
+  top:75%;
+  float:left;
+  width:20%;
+  height:10%;
+  position: absolute;
 }
 </style>

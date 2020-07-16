@@ -91,7 +91,13 @@ ipcMain.on('connect_by_aspect', (event, data) => {
   sConn.connectByCOMAspect('manufacturer', configs.MANUFACTURER, function (err) {
     sConn.constructParser(function (data) {
       console.log(data)
-      global.win.webContents.send('data_recieved', data)
+      if (data.includes('gx')) {
+        global.win.webContents.send('x_update', data.replace('gx', ''))
+      } else if (data.includes('gy')) {
+        global.win.webContents.send('y_update', data.replace('gy', ''))
+      } else {
+        global.win.webContents.send('data_recieved', data)
+      }
     })
     event.reply('connect_by_aspect', err)
   })
