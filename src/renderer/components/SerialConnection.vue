@@ -1,14 +1,12 @@
 <template>
 <div id='connection-window'>
   <button id="connect" @click="autoConnect()">Automatically Connect</button>
-  <button v-if="serialDevices==null" id="list_devices" @click="sendListDevices()">Update Devices</button>
-  <div id="communication_window">
-    <ul>
-      <li v-for="device in serialDevices" :key="device.path">
-        <button @click="manualConnect(device.path)">{{ device.path }}: {{device.manufacturer}}</button>
-      </li>
-    </ul>
-  </div>
+  <button v-if="serialDevices==null" id="list_devices" @click="sendListDevices()">Show Devices</button>
+  <ul>
+    <li v-for="device in serialDevices" :key="device.path">
+      <button @click="manualConnect(device.path)">{{ device.path }}: {{device.manufacturer}}</button>
+    </li>
+  </ul>
 </div>
 </template>
 
@@ -34,7 +32,6 @@ export default {
       window.ipcRenderer.send('list_connected_devices', 'NULL')
       window.ipcRenderer.on('list_connected_devices', (event, arg) => {
         this.serialDevices = arg
-        console.log(this.serialDevices)
       })
     },
     autoConnect: function () {
@@ -55,13 +52,18 @@ h3 {
   margin: 40px 0 0;
 }
 ul {
-  list-style-type: none;
-  padding: 0;
+  float:left;
+  width: 100%;
+  margin: 0px;
 }
 li {
   display: inline-block;
-  margin: 10px;
+  margin: 0px;
   width: 100%;
+}
+button {
+  float: left;
+  width: 100%
 }
 a {
   color: #42b983;
