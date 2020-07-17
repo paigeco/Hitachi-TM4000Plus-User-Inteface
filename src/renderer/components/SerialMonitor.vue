@@ -18,42 +18,34 @@
 <script>
 
 const { ipcRenderer } = require('electron')
-
-function init () {
-  // add global variables to your web page
-  window.isElectron = true
-  window.ipcRenderer = ipcRenderer
-  window.ipcRenderer.on('data_recieved', function (event, arg) {
-    vm.communicationLog.push({ sender: 'From Device', message: arg, color: 'red' })
-  })
-}
-
-init()
+window.isElectron = true
+window.ipcRenderer = ipcRenderer
 
 // eslint-disable-next-line prefer-const
-let vm = {
+export default {
   props: {},
   name: 'SerialMonitor',
-  communicationLog: [],
-  serialDevices: false,
   data () {
     return {
-      communicationLog: vm.communicationLog,
-      serialDevices: vm.serialDevices
+      communicationLog: []
     }
   },
   methods: {
     sendMsg: function () {
       var stringInput = document.getElementById('serial-command')
-      vm.communicationLog.push({ sender: 'To Device', message: stringInput.value, color: 'blue' })
+      this.communicationLog.push({ sender: 'To Device', message: stringInput.value, color: 'blue' })
       window.ipcRenderer.send('send_data', stringInput.value)
     },
-    created () {
+    initReciever: function () {
+      window.ipcRenderer.on('data_recieved', function (event, arg) {
+        this.communicationLog.push({ sender: 'From Device', message: arg, color: 'red' })
+      })
+    },
+    mounted: function () {
+      this.initReciever()
     }
   }
 }
-
-export default vm
 
 </script>
 

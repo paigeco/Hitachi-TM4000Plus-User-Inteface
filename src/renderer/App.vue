@@ -57,10 +57,11 @@ export default {
     position: relative;
 }
 #serial-connection-window{
-  top:75%;
+  top:76%;
+  bottom:100%;
+  left:0%;
   float:left;
   width:20%;
-  height:10%;
   position: absolute;
 }
 </style>

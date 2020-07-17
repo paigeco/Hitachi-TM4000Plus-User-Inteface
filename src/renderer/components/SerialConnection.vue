@@ -1,8 +1,13 @@
 <template>
 <div id='connection-window'>
   <button id="connect" @click="autoConnect()">Automatically Connect</button>
-  <div id='manual_conn'>
-    <button id="list_devices" @click="sendListDevices()">Manually Connect</button>
+  <button v-if="serialDevices==null" id="list_devices" @click="sendListDevices()">Update Devices</button>
+  <div id="communication_window">
+    <ul>
+      <li v-for="device in serialDevices" :key="device.path">
+        <button @click="manualConnect(device.path)">{{ device.path }}: {{device.manufacturer}}</button>
+      </li>
+    </ul>
   </div>
 </div>
 </template>
@@ -10,14 +15,26 @@
 <script>
 
 // eslint-disable-next-line prefer-const
-let vm = {
+export default {
   name: 'SerialConnection',
-  props: {},
+  data () {
+    return {
+      serialDevices: null,
+      connected: false
+    }
+  },
   methods: {
+    checkConnection: function () {
+      window.ipcRenderer.send('is_connected', 'NULL')
+      window.ipcRenderer.on('is_connected', (event, arg) => {
+        if (arg !== '') { this.connected = true } else { this.connected = false };
+      })
+    },
     sendListDevices: function () {
       window.ipcRenderer.send('list_connected_devices', 'NULL')
-      window.ipcRenderer.on('list_connected_devices', function (event, arg) {
-        vm.serialDevices = arg
+      window.ipcRenderer.on('list_connected_devices', (event, arg) => {
+        this.serialDevices = arg
+        console.log(this.serialDevices)
       })
     },
     autoConnect: function () {
@@ -25,11 +42,11 @@ let vm = {
     },
     manualConnect: function (path) {
       window.ipcRenderer.send('manual_connection', path)
-    }
+    },
+    mounted: function () { this.checkConnection() }
   }
 }
 
-export default vm
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -43,7 +60,8 @@ ul {
 }
 li {
   display: inline-block;
-  margin: 0 10px;
+  margin: 10px;
+  width: 100%;
 }
 a {
   color: #42b983;

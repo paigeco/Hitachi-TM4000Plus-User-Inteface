@@ -24,12 +24,8 @@ window.addEventListener('DOMContentLoaded', function () {
   let offsetX = 0
   let offsetY = 0
 
-  const { ipcRenderer } = require('electron')
-
   function init () {
     // add global variables to your web page
-    window.isElectron = true
-    window.ipcRenderer = ipcRenderer
     window.ipcRenderer.on('x_update', function (event, arg) {
       console.log(arg)
       offsetX = 511 - parseInt(arg, 10)
@@ -91,7 +87,7 @@ window.addEventListener('DOMContentLoaded', function () {
   }, errBack)
 
   ctx.lineWidth = 5
-  ctx.strokeStyle = 'black'
+  ctx.strokeStyle = 'lime'
   ctx.save()
 
   function loop () {
