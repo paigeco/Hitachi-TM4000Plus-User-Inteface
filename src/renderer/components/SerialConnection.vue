@@ -35,7 +35,7 @@ export default {
       })
     },
     autoConnect: function () {
-      window.ipcRenderer.send('connect_by_aspect', 'NULL')
+      window.ipcRenderer.send('connect_by_aspect', 'manufacturer')
     },
     manualConnect: function (path) {
       window.ipcRenderer.send('manual_connection', path)

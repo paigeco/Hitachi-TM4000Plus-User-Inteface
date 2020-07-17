@@ -5,9 +5,6 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { format as formatUrl } from 'url'
 import path from 'path'
 
-// IMPORT THE CONFIGS FROM THE CONFIGS FILE
-const configs = require('./app_config.json')
-
 // IMPORT THE SERIAL CONNECTORS FROM THE FILE
 const sConn = require('./serial_connection.js')
 
@@ -88,7 +85,7 @@ ipcMain.on('manual_connection', (event, comPath) => {
 })
 
 ipcMain.on('connect_by_aspect', (event, data) => {
-  sConn.connectByCOMAspect('manufacturer', configs.MANUFACTURER, function (err) {
+  sConn.connectByCOMAspect('manufacturer', function (err) {
     sConn.constructParser(function (data) {
       console.log(data)
       if (data.includes('gx')) {

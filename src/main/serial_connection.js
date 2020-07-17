@@ -44,7 +44,8 @@ const connectByPath = function (comPath, callback) {
 }
 
 // CONSTRUCT THE AUTOMATIC CONNECTION BY MANUFACTURER FUNCTION
-const connectByCOMAspect = function (identifierType, id, callback) {
+const connectByCOMAspect = function (identifierType, callback) {
+  const id = configs[identifierType]
   // LOG THAT WE ARE ATTEMPTING A CONNECTION
   console.log('Attempting to find a connection.')
   // GET ALL THE CONNECTED SERIAL PORTS
